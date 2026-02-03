@@ -27,6 +27,7 @@ export const briefApi = {
         id: briefId,
         title: '',
         content: '',
+        createdAt: new Date().toISOString(),
         citations: [],
         verificationResults: [],
       };

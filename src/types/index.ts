@@ -5,6 +5,7 @@ export interface Citation {
   reporter: string;
   pinCite?: string;
   year: number;
+  date: string; // ISO date string
   position: {
     start: number;
     end: number;
@@ -37,6 +38,7 @@ export interface Brief {
   id: string;
   title: string;
   content: string;
+  createdAt: string; // ISO date string
   citations: Citation[];
   verificationResults: VerificationResult[];
 }

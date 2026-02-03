@@ -3,6 +3,7 @@ import { Brief } from '../types';
 export const sampleBrief: Brief = {
   id: 'brief-001',
   title: 'Motion to Dismiss for Failure to State a Claim',
+  createdAt: '2024-01-15T10:30:00Z',
   content: `# MEMORANDUM IN SUPPORT OF DEFENDANT'S MOTION TO DISMISS
 
 ## I. INTRODUCTION
@@ -58,6 +59,7 @@ For the foregoing reasons, Defendant respectfully requests that the Court grant 
       reporter: '550 U.S. 544',
       pinCite: '570',
       year: 2007,
+      date: '2007-05-21T00:00:00Z',
       position: { start: 407, end: 421 },
     },
     {
@@ -67,6 +69,7 @@ For the foregoing reasons, Defendant respectfully requests that the Court grant 
       reporter: '556 U.S. 662',
       pinCite: '678',
       year: 2009,
+      date: '2009-05-18T00:00:00Z',
       position: { start: 556, end: 570 },
     },
     {
@@ -76,6 +79,7 @@ For the foregoing reasons, Defendant respectfully requests that the Court grant 
       reporter: '612 F.3d 1122',
       pinCite: '1130',
       year: 2010,
+      date: '2010-08-12T00:00:00Z',
       position: { start: 855, end: 869 },
     },
     {
@@ -85,6 +89,7 @@ For the foregoing reasons, Defendant respectfully requests that the Court grant 
       reporter: '544 U.S. 336',
       pinCite: '342',
       year: 2005,
+      date: '2005-04-19T00:00:00Z',
       position: { start: 1301, end: 1315 },
     },
     {
@@ -94,6 +99,7 @@ For the foregoing reasons, Defendant respectfully requests that the Court grant 
       reporter: '485 U.S. 224',
       pinCite: '231',
       year: 1988,
+      date: '1988-03-07T00:00:00Z',
       position: { start: 1551, end: 1565 },
     },
     {
@@ -103,6 +109,7 @@ For the foregoing reasons, Defendant respectfully requests that the Court grant 
       reporter: '551 U.S. 308',
       pinCite: '314',
       year: 2007,
+      date: '2007-06-21T00:00:00Z',
       position: { start: 2050, end: 2064 },
     },
   ],
@@ -171,6 +178,7 @@ For the foregoing reasons, Defendant respectfully requests that the Court grant 
 export const sampleBrief2: Brief = {
   id: 'brief-002',
   title: 'Motion for Summary Judgment - Contract Dispute',
+  createdAt: '2024-02-20T14:15:00Z',
   content: `# MEMORANDUM IN SUPPORT OF PLAINTIFF'S MOTION FOR SUMMARY JUDGMENT
 
 ## I. INTRODUCTION
@@ -206,6 +214,7 @@ For the foregoing reasons, Plaintiff respectfully requests that the Court grant 
       reporter: '§ 235',
       pinCite: undefined,
       year: 1981,
+      date: '1981-01-01T00:00:00Z',
       position: { start: 450, end: 480 },
     },
     {
@@ -215,6 +224,7 @@ For the foregoing reasons, Plaintiff respectfully requests that the Court grant 
       reporter: '477 U.S. 242',
       pinCite: '248',
       year: 1986,
+      date: '1986-06-25T00:00:00Z',
       position: { start: 650, end: 680 },
     },
     {
@@ -224,6 +234,7 @@ For the foregoing reasons, Plaintiff respectfully requests that the Court grant 
       reporter: '477 U.S. 317',
       pinCite: '322',
       year: 1986,
+      date: '1986-06-26T00:00:00Z',
       position: { start: 750, end: 780 },
     },
     {
@@ -233,6 +244,7 @@ For the foregoing reasons, Plaintiff respectfully requests that the Court grant 
       reporter: '545 F.2d 1160',
       pinCite: '1167',
       year: 1976,
+      date: '1976-08-20T00:00:00Z',
       position: { start: 900, end: 930 },
     },
     {
@@ -242,6 +254,7 @@ For the foregoing reasons, Plaintiff respectfully requests that the Court grant 
       reporter: '9 Exch. 341',
       pinCite: '354',
       year: 1854,
+      date: '1854-02-23T00:00:00Z',
       position: { start: 1100, end: 1130 },
     },
   ],
@@ -287,6 +300,7 @@ For the foregoing reasons, Plaintiff respectfully requests that the Court grant 
 export const sampleBrief3: Brief = {
   id: 'brief-003',
   title: 'Opposition to Motion to Compel Arbitration',
+  createdAt: '2024-03-10T09:00:00Z',
   content: `# MEMORANDUM IN OPPOSITION TO DEFENDANT'S MOTION TO COMPEL ARBITRATION
 
 ## I. INTRODUCTION
@@ -322,6 +336,7 @@ The arbitration clause is unconscionable and unenforceable. The Court should den
       reporter: '24 Cal. 4th 83',
       pinCite: undefined,
       year: 2000,
+      date: '2000-08-24T00:00:00Z',
       position: { start: 200, end: 250 },
     },
     {
@@ -331,6 +346,7 @@ The arbitration clause is unconscionable and unenforceable. The Court should den
       reporter: '279 F.3d 889',
       pinCite: '892',
       year: 2002,
+      date: '2002-01-15T00:00:00Z',
       position: { start: 400, end: 450 },
     },
     {
@@ -340,6 +356,7 @@ The arbitration clause is unconscionable and unenforceable. The Court should den
       reporter: '563 U.S. 333',
       pinCite: '339',
       year: 2011,
+      date: '2011-04-27T00:00:00Z',
       position: { start: 600, end: 650 },
     },
     {
@@ -349,6 +366,7 @@ The arbitration clause is unconscionable and unenforceable. The Court should den
       reporter: '55 Cal. 4th 223',
       pinCite: '246',
       year: 2012,
+      date: '2012-08-16T00:00:00Z',
       position: { start: 800, end: 850 },
     },
     {
@@ -358,6 +376,7 @@ The arbitration clause is unconscionable and unenforceable. The Court should den
       reporter: '29 Cal. 4th 1064',
       pinCite: '1071',
       year: 2003,
+      date: '2003-07-24T00:00:00Z',
       position: { start: 1000, end: 1050 },
     },
     {
@@ -367,6 +386,7 @@ The arbitration clause is unconscionable and unenforceable. The Court should den
       reporter: '42 Cal. 4th 443',
       pinCite: '457',
       year: 2007,
+      date: '2007-08-30T00:00:00Z',
       position: { start: 1200, end: 1250 },
     },
   ],
@@ -423,6 +443,7 @@ The arbitration clause is unconscionable and unenforceable. The Court should den
 export const sampleBrief4: Brief = {
   id: 'brief-004',
   title: 'Motion for Preliminary Injunction - Trade Secrets',
+  createdAt: '2024-04-05T16:45:00Z',
   content: `# MEMORANDUM IN SUPPORT OF PLAINTIFF'S MOTION FOR PRELIMINARY INJUNCTION
 
 ## I. INTRODUCTION
@@ -462,6 +483,7 @@ The Court should grant the preliminary injunction to prevent further misappropri
       reporter: '18 U.S.C. § 1836',
       pinCite: 'b',
       year: 2016,
+      date: '2016-05-11T00:00:00Z',
       position: { start: 300, end: 350 },
     },
     {
@@ -471,6 +493,7 @@ The Court should grant the preliminary injunction to prevent further misappropri
       reporter: '555 U.S. 7',
       pinCite: '20',
       year: 2008,
+      date: '2008-11-12T00:00:00Z',
       position: { start: 500, end: 550 },
     },
     {
@@ -480,6 +503,7 @@ The Court should grant the preliminary injunction to prevent further misappropri
       reporter: 'Cal. Civ. Code § 3426.1',
       pinCite: undefined,
       year: 1984,
+      date: '1984-01-01T00:00:00Z',
       position: { start: 700, end: 750 },
     },
     {
@@ -489,6 +513,7 @@ The Court should grant the preliminary injunction to prevent further misappropri
       reporter: '467 U.S. 986',
       pinCite: '1011',
       year: 1984,
+      date: '1984-06-26T00:00:00Z',
       position: { start: 900, end: 950 },
     },
     {
@@ -498,6 +523,7 @@ The Court should grant the preliminary injunction to prevent further misappropri
       reporter: '416 U.S. 470',
       pinCite: '493',
       year: 1974,
+      date: '1974-05-13T00:00:00Z',
       position: { start: 1100, end: 1150 },
     },
   ],
