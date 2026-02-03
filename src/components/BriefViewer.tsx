@@ -1,4 +1,9 @@
-import { sampleBrief } from '../data/sampleBrief';
+import React, { useMemo } from 'react';
+import ReactMarkdown from 'react-markdown';
+import type { Components } from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
+import type { Element } from 'hast';
+
 import { Brief, Citation, VerificationResult } from '../types';
 import { VerificationSummary } from './VerificationSummary';
 
@@ -8,11 +13,28 @@ interface BriefViewerProps {
   selectedCitationId: string | null;
 }
 
-export function BriefViewer({
-  brief,
-  onCitationClick,
-  selectedCitationId,
-}: BriefViewerProps) {
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function contentToMarkdownWithCitationSpans(content: string, citations: Citation[]): string {
+  return content.replace(/\[\[CITATION:(\d+)\]\]/g, (_m, n) => {
+    const idx = Number(n);
+    const citation = Number.isFinite(idx) ? citations[idx - 1] : undefined;
+    if (!citation) return `[[CITATION:${n}]]`;
+
+    // Marker span. Styling + behavior comes from Components.span below.
+    const safeText = escapeHtml(citation.text);
+    return `<span data-citation-index="${n}">${safeText}</span>`;
+  });
+}
+
+export function BriefViewer({ brief, onCitationClick, selectedCitationId }: BriefViewerProps) {
   const getResultForCitation = (citationId: string): VerificationResult | undefined => {
     return brief.verificationResults.find((r) => r.citationId === citationId);
   };
@@ -28,58 +50,86 @@ export function BriefViewer({
     }
   };
 
-  const renderContent = () => {
-    const content = brief.content;
-    const parts: React.ReactNode[] = [];
-    let lastIndex = 0;
+  const markdown = useMemo(
+    () => contentToMarkdownWithCitationSpans(brief.content, brief.citations),
+    [brief.content, brief.citations]
+  );
 
-    const citationRegex = /\[\[CITATION:(\d+)\]\]/g;
-    let match;
+  const components: Components = useMemo(
+    () => ({
+      span: ({ node, children, ...props }) => {
+        const el = node as unknown as Element;
+        const rawIndex = el.properties?.['dataCitationIndex'];
 
-    while ((match = citationRegex.exec(content)) !== null) {
-      if (match.index > lastIndex) {
-        parts.push(content.slice(lastIndex, match.index));
-      }
+        if (rawIndex == null) {
+          return <span {...props}>{children}</span>;
+        }
 
-      const citationIndex = parseInt(match[1], 10) - 1;
-      const citation = brief.citations[citationIndex];
+        const n = Number(rawIndex);
+        const citation = Number.isFinite(n) ? brief.citations[n - 1] : undefined;
 
-      if (citation) {
+        if (!citation) {
+          return <span {...props}>{children}</span>;
+        }
+
         const result = getResultForCitation(citation.id);
-        const severity = result?.severity || 'none';
+        const severity = result?.severity ?? 'none';
         const isSelected = selectedCitationId === citation.id;
 
-        parts.push(
+        const isClickable = Boolean(result);
+
+        const baseClasses =
+          'px-1.5 py-0.5 rounded border transition-all hover:opacity-90';
+        const cursorClass = isClickable ? 'cursor-pointer' : 'cursor-default';
+
+        const extraEmphasis =
+          severity === 'critical' ? 'font-semibold' : '';
+
+        return (
           <span
             key={citation.id}
             onClick={() => result && onCitationClick(citation, result)}
-            className={`px-1.5 py-0.5 rounded cursor-pointer border transition-all hover:opacity-90 ${getSeverityClasses(severity)} ${isSelected ? 'ring-2 ring-primary ring-offset-2' : 'border-transparent'}`}
+            className={[
+              baseClasses,
+              cursorClass,
+              getSeverityClasses(severity),
+              extraEmphasis,
+              isSelected ? 'ring-2 ring-primary ring-offset-2' : 'border-transparent',
+            ].join(' ')}
+            title={result?.message ?? undefined}
+            role={isClickable ? 'button' : undefined}
+            tabIndex={isClickable ? 0 : -1}
+            onKeyDown={(e) => {
+              if (!result) return;
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onCitationClick(citation, result);
+              }
+            }}
           >
             {citation.text}
           </span>
         );
-      }
-
-      lastIndex = match.index + match[0].length;
-    }
-
-    if (lastIndex < content.length) {
-      parts.push(content.slice(lastIndex));
-    }
-
-    return parts;
-  };
+      },
+    }),
+    [brief.citations, selectedCitationId]
+  );
 
   return (
     <div className="flex flex-col h-full bg-card">
       <div className="sticky top-0 z-10 bg-card border-b border-border px-8 py-6">
-        <h1 className="text-2xl font-semibold font-sans text-primary tracking-tight">{brief.title}</h1>
+        <h1 className="text-2xl font-semibold font-sans text-primary tracking-tight">
+          {brief.title}
+        </h1>
       </div>
 
       <div className="flex-1 overflow-y-auto px-8 py-6">
         <div className="legal-prose max-w-4xl mx-auto whitespace-pre-wrap">
           <VerificationSummary brief={brief} />
-          {renderContent()}
+
+          <ReactMarkdown rehypePlugins={[rehypeRaw]} components={components}>
+            {markdown}
+          </ReactMarkdown>
         </div>
       </div>
     </div>
