@@ -1,15 +1,18 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import type { Element } from 'hast';
+import { Loader2, AlertCircle, FileText } from 'lucide-react';
 
 import { Brief, Citation, VerificationResult } from '../types';
 import { VerificationSummary } from './VerificationSummary';
 
 interface BriefViewerProps {
-  brief: Brief;
-  onCitationClick: (citation: Citation, result: VerificationResult) => void;
+  brief: Brief | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  onCitationClick: (citationId: string) => void;
   selectedCitationId: string | null;
 }
 
@@ -34,7 +37,68 @@ function contentToMarkdownWithCitationSpans(content: string, citations: Citation
   });
 }
 
-export function BriefViewer({ brief, onCitationClick, selectedCitationId }: BriefViewerProps) {
+export function BriefViewer({ brief, isLoading, isError, onCitationClick, selectedCitationId }: BriefViewerProps) {
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex flex-col h-full bg-card">
+        <div className="sticky top-0 z-10 bg-card border-b border-border px-8 py-6">
+          <div className="h-8 w-64 bg-muted animate-pulse rounded" />
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            <p className="text-sm text-muted-foreground">Loading brief...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div className="flex flex-col h-full bg-card">
+        <div className="sticky top-0 z-10 bg-card border-b border-border px-8 py-6">
+          <div className="h-8 w-64 bg-muted rounded" />
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4 max-w-md text-center">
+            <AlertCircle className="w-12 h-12 text-destructive" />
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-2">Failed to load brief</h2>
+              <p className="text-sm text-muted-foreground">
+                There was an error loading the brief. Please try again later.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (!brief || (!brief.content && brief.citations.length === 0)) {
+    return (
+      <div className="flex flex-col h-full bg-card">
+        <div className="sticky top-0 z-10 bg-card border-b border-border px-8 py-6">
+          <div className="h-8 w-64 bg-muted rounded" />
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4 max-w-md text-center">
+            <FileText className="w-12 h-12 text-muted-foreground" />
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-2">No brief available</h2>
+              <p className="text-sm text-muted-foreground">
+                This brief appears to be empty or unavailable.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const getResultForCitation = (citationId: string): VerificationResult | undefined => {
     return brief.verificationResults.find((r) => r.citationId === citationId);
   };
@@ -66,7 +130,7 @@ export function BriefViewer({ brief, onCitationClick, selectedCitationId }: Brie
         }
 
         const n = Number(rawIndex);
-        const citation = Number.isFinite(n) ? brief.citations[n - 1] : undefined;
+        const citation = Number.isFinite(n) ? brief!.citations[n - 1] : undefined;
 
         if (!citation) {
           return <span {...props}>{children}</span>;
@@ -91,7 +155,7 @@ export function BriefViewer({ brief, onCitationClick, selectedCitationId }: Brie
         return (
           <span
             key={citation.id}
-            onClick={() => result && onCitationClick(citation, result)}
+            onClick={() => isClickable && onCitationClick(citation.id)}
             className={[
               baseClasses,
               cursorClass,
@@ -104,10 +168,10 @@ export function BriefViewer({ brief, onCitationClick, selectedCitationId }: Brie
             role={isClickable ? 'button' : undefined}
             tabIndex={isClickable ? 0 : -1}
             onKeyDown={(e) => {
-              if (!result) return;
+              if (!isClickable) return;
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                onCitationClick(citation, result);
+                onCitationClick(citation.id);
               }
             }}
           >
@@ -116,7 +180,7 @@ export function BriefViewer({ brief, onCitationClick, selectedCitationId }: Brie
         );
       },
     }),
-    [brief.citations, selectedCitationId]
+    [brief, selectedCitationId, onCitationClick]
   );
 
   return (
@@ -129,7 +193,7 @@ export function BriefViewer({ brief, onCitationClick, selectedCitationId }: Brie
 
       <div className="flex-1 overflow-y-auto px-8 py-6">
         <div className="legal-prose  max-w-4xl mx-auto whitespace-pre-wrap">
-          <VerificationSummary brief={brief} />
+          <VerificationSummary brief={brief} isLoading={false} />
 
           <div className='bg-card rounded-xl border border-border shadow-sm p-8 lg:p-12'>
             <ReactMarkdown rehypePlugins={[rehypeRaw]} components={components}>

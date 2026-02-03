@@ -1,12 +1,45 @@
 import { motion } from 'framer-motion';
-import { CheckCircle, AlertTriangle, XCircle, FileText } from 'lucide-react';
+import { CheckCircle, AlertTriangle, XCircle, FileText, Loader2 } from 'lucide-react';
 import { Brief } from '../types';
 
 interface VerificationSummaryProps {
-  brief: Brief;
+  brief: Brief | undefined;
+  isLoading?: boolean;
 }
 
-export function VerificationSummary({ brief }: VerificationSummaryProps) {
+export function VerificationSummary({ brief, isLoading }: VerificationSummaryProps) {
+  // Loading state
+  if (isLoading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="mb-4 flex items-center gap-6 px-8 py-3 bg-card rounded-lg border border-border shadow-sm lg:px-12"
+      >
+        <div className="flex items-center gap-2 text-sm font-sans text-muted-foreground">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span className="font-medium">Loading citations...</span>
+        </div>
+      </motion.div>
+    );
+  }
+
+  // Empty state
+  if (!brief || brief.citations.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="mb-4 flex items-center justify-center gap-2 px-8 py-3 bg-card rounded-lg border border-border shadow-sm lg:px-12"
+      >
+        <FileText className="w-4 h-4 text-muted-foreground" />
+        <span className="text-sm font-sans text-muted-foreground">No citations available</span>
+      </motion.div>
+    );
+  }
+
   const stats = brief.verificationResults.reduce(
     (acc, result) => {
       switch (result.severity) {

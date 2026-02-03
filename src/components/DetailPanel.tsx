@@ -1,17 +1,107 @@
-import { Citation, VerificationResult } from '../types';
-import { X, AlertTriangle, XCircle, CheckCircle, BookOpen } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { X, AlertTriangle, XCircle, CheckCircle, BookOpen, Loader2, AlertCircle } from 'lucide-react';
+import { VerificationResult } from '../types';
+import { briefApi } from '../services/briefApi';
 
 interface DetailPanelProps {
-  citation: Citation | null;
-  result: VerificationResult | null;
+  citationId: string | null;
   onClose?: () => void;
 }
 
-export function DetailPanel({ citation, result, onClose }: DetailPanelProps) {
+export function DetailPanel({ citationId, onClose }: DetailPanelProps) {
+  // Fetch citation details when citationId is provided
+  const {
+    data: citationDetails,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['citation', citationId],
+    queryFn: () => briefApi.fetchCitationDetails(citationId!),
+    enabled: !!citationId,
+  });
+
+  const citation = citationDetails?.citation || null;
+  const result = citationDetails?.result || null;
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex flex-col h-full bg-card">
+        <div className="p-4 border-b border-border">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Loader2 className="w-5 h-5 text-muted-foreground animate-spin" />
+              <span className="text-sm font-semibold font-sans text-muted-foreground">
+                Loading details...
+              </span>
+            </div>
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="p-1 rounded hover:bg-black/5 transition-colors"
+                aria-label="Close panel"
+              >
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            <p className="text-sm text-muted-foreground">Loading citation details...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div className="flex flex-col h-full bg-card">
+        <div className="p-4 border-b border-border">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-destructive" />
+              <span className="text-sm font-semibold font-sans text-destructive">
+                Error loading details
+              </span>
+            </div>
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="p-1 rounded hover:bg-black/5 transition-colors"
+                aria-label="Close panel"
+              >
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="flex flex-col items-center gap-3 max-w-sm text-center">
+            <AlertCircle className="w-12 h-12 text-destructive" />
+            <div>
+              <h3 className="text-sm font-semibold text-foreground mb-1">Failed to load citation</h3>
+              <p className="text-sm text-muted-foreground">
+                There was an error loading the citation details. Please try again.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
   if (!citation || !result) {
     return (
       <div className="flex items-center justify-center h-full p-8">
-        <p className="text-sm text-muted-foreground text-center">Click on a citation to see verification details.</p>
+        <div className="text-center">
+          <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+          <p className="text-sm text-muted-foreground">Click on a citation to see verification details.</p>
+        </div>
       </div>
     );
   }

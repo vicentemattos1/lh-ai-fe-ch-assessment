@@ -1,39 +1,38 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { BriefViewer } from './components/BriefViewer';
 import { DetailPanel } from './components/DetailPanel';
-import { sampleBrief } from './data/sampleBrief';
-import { Citation, VerificationResult } from './types';
+import { briefApi } from './services/briefApi';
 
 function App() {
-  const [selectedCitation, setSelectedCitation] = useState<Citation | null>(null);
-  const [selectedResult, setSelectedResult] = useState<VerificationResult | null>(null);
-  const [isPanelVisible, setIsPanelVisible] = useState(false);
+  const [selectedCitationId, setSelectedCitationId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (selectedCitation && selectedResult) {
-      setIsPanelVisible(true);
-    } else {
-      setIsPanelVisible(false);
-    }
-  }, [selectedCitation, selectedResult]);
+  // Fetch brief using React Query
+  const { data: brief, isLoading, isError } = useQuery({
+    queryKey: ['brief', 'brief-001'],
+    queryFn: () => briefApi.fetchBrief('brief-001'),
+  });
 
-  const handleCitationClick = (citation: Citation, result: VerificationResult) => {
-    setSelectedCitation(citation);
-    setSelectedResult(result);
+  const handleCitationClick = (citationId: string) => {
+    setSelectedCitationId(citationId);
   };
 
   const handleClosePanel = () => {
-    setSelectedCitation(null);
-    setSelectedResult(null);
+    setSelectedCitationId(null);
   };
+
+  // Panel is visible when a citation is selected
+  const isPanelVisible = !!selectedCitationId;
 
   return (
     <div className='relative flex h-screen overflow-hidden'>
       <div className='flex-1 overflow-hidden'>
         <BriefViewer
-          brief={sampleBrief}
+          brief={brief}
+          isLoading={isLoading}
+          isError={isError}
           onCitationClick={handleCitationClick}
-          selectedCitationId={selectedCitation?.id || null}
+          selectedCitationId={selectedCitationId}
         />
       </div>
       <div 
@@ -41,7 +40,7 @@ function App() {
           isPanelVisible ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <DetailPanel citation={selectedCitation} result={selectedResult} onClose={handleClosePanel} />
+        <DetailPanel citationId={selectedCitationId} onClose={handleClosePanel} />
       </div>
     </div>
   );
