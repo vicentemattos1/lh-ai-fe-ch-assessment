@@ -1,5 +1,5 @@
 import { Brief, Citation, VerificationResult } from '../types';
-import { sampleBrief } from '../data/sampleBrief';
+import { allSampleBriefs } from '../data/sampleBrief';
 
 interface CitationDetails {
   citation: Citation;
@@ -32,9 +32,15 @@ export const briefApi = {
       };
     }
 
-    // Return sample brief with matching ID or default
+    // Find brief with matching ID or return first brief as default
+    const foundBrief = allSampleBriefs.find((b) => b.id === briefId);
+    if (foundBrief) {
+      return foundBrief;
+    }
+
+    // Return first brief with updated ID if not found
     return {
-      ...sampleBrief,
+      ...allSampleBriefs[0],
       id: briefId,
     };
   },
@@ -49,9 +55,15 @@ export const briefApi = {
     const delay = Math.random() * 2000 + 2000;
     await new Promise((resolve) => setTimeout(resolve, delay));
 
-    // Find citation and result from sample data
-    const citation = sampleBrief.citations.find((c) => c.id === citationId);
-    const result = sampleBrief.verificationResults.find((r) => r.citationId === citationId);
+    // Find citation and result from all sample briefs
+    let citation: Citation | undefined;
+    let result: VerificationResult | undefined;
+
+    for (const brief of allSampleBriefs) {
+      citation = brief.citations.find((c) => c.id === citationId);
+      result = brief.verificationResults.find((r) => r.citationId === citationId);
+      if (citation && result) break;
+    }
 
     if (!citation || !result) {
       throw new Error(`Citation with ID ${citationId} not found`);
@@ -64,12 +76,12 @@ export const briefApi = {
   },
 
   /**
-   * Fetches all briefs (for future use)
+   * Fetches all briefs
    * @returns Promise that resolves to an array of Briefs
    */
   async fetchAllBriefs(): Promise<Brief[]> {
     const delay = Math.random() * 1000 + 1000;
     await new Promise((resolve) => setTimeout(resolve, delay));
-    return [sampleBrief];
+    return allSampleBriefs;
   },
 };
