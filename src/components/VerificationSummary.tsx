@@ -31,7 +31,7 @@ export function VerificationSummary({ brief }: VerificationSummaryProps) {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="mb-4 flex items-center gap-6 px-4 py-3 bg-card rounded-lg border border-border shadow-sm"
+      className="mb-4 flex items-center gap-6 px-8 py-3 bg-card rounded-lg border border-border shadow-sm lg:px-12"
     >
       <div className="flex items-center gap-2 text-sm font-sans text-muted-foreground">
         <FileText className="w-4 h-4" />

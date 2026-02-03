@@ -134,7 +134,7 @@
 @layer components {
   .legal-prose {
     @apply text-foreground leading-relaxed;
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
   .legal-prose h1,

@@ -4,11 +4,10 @@ import { X, AlertTriangle, XCircle, CheckCircle, BookOpen } from 'lucide-react';
 interface DetailPanelProps {
   citation: Citation | null;
   result: VerificationResult | null;
+  onClose?: () => void;
 }
 
-export function DetailPanel({ citation, result }: DetailPanelProps) {
-
-
+export function DetailPanel({ citation, result, onClose }: DetailPanelProps) {
   if (!citation || !result) {
     return (
       <div className="flex items-center justify-center h-full p-8">
@@ -20,7 +19,7 @@ export function DetailPanel({ citation, result }: DetailPanelProps) {
   const config = getSeverityConfig(result);
 
   return (
-    <div className="flex flex-col h-full bg-sidebar-background">
+    <div className="flex flex-col h-full bg-card">
       <div className={`p-4 ${config.bgClass} border-b ${config.borderClass}`}>
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2">
@@ -30,7 +29,7 @@ export function DetailPanel({ citation, result }: DetailPanelProps) {
             </span>
           </div>
           <button
-            onClick={()=>{}}
+            onClick={onClose}
             className="p-1 rounded hover:bg-black/5 transition-colors"
             aria-label="Close panel"
           >

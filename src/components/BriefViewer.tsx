@@ -42,11 +42,11 @@ export function BriefViewer({ brief, onCitationClick, selectedCitationId }: Brie
   const getSeverityClasses = (severity: string): string => {
     switch (severity) {
       case 'critical':
-        return 'bg-severity-critical-bg text-severity-critical border-severity-critical-border';
+        return 'bg-severity-critical-bg text-severity-critical border-severity-critical-border hover:bg-severity-critical/15 hover:border-severity-critical hover:border-opacity-100';
       case 'warning':
-        return 'bg-severity-warning-bg text-severity-warning border-severity-warning-border';
+        return 'bg-severity-warning-bg text-severity-warning border-severity-warning-border hover:bg-severity-warning/15 hover:border-severity-warning hover:border-opacity-100';
       default:
-        return 'bg-severity-valid-bg text-severity-valid border-severity-valid-border';
+        return 'bg-severity-valid-bg text-severity-valid border-severity-valid-border hover:bg-severity-valid/15 hover:border-severity-valid hover:border-opacity-100';
     }
   };
 
@@ -79,8 +79,11 @@ export function BriefViewer({ brief, onCitationClick, selectedCitationId }: Brie
         const isClickable = Boolean(result);
 
         const baseClasses =
-          'px-1.5 py-0.5 rounded border transition-all hover:opacity-90';
+          'px-1.5 py-0.5 rounded border transition-all';
         const cursorClass = isClickable ? 'cursor-pointer' : 'cursor-default';
+        const hoverClasses = isClickable
+          ? 'hover:scale-105 hover:shadow-md'
+          : '';
 
         const extraEmphasis =
           severity === 'critical' ? 'font-semibold' : '';
@@ -94,6 +97,7 @@ export function BriefViewer({ brief, onCitationClick, selectedCitationId }: Brie
               cursorClass,
               getSeverityClasses(severity),
               extraEmphasis,
+              hoverClasses,
               isSelected ? 'ring-2 ring-primary ring-offset-2' : 'border-transparent',
             ].join(' ')}
             title={result?.message ?? undefined}
@@ -124,12 +128,14 @@ export function BriefViewer({ brief, onCitationClick, selectedCitationId }: Brie
       </div>
 
       <div className="flex-1 overflow-y-auto px-8 py-6">
-        <div className="legal-prose max-w-4xl mx-auto whitespace-pre-wrap">
+        <div className="legal-prose  max-w-4xl mx-auto whitespace-pre-wrap">
           <VerificationSummary brief={brief} />
 
-          <ReactMarkdown rehypePlugins={[rehypeRaw]} components={components}>
-            {markdown}
-          </ReactMarkdown>
+          <div className='bg-card rounded-xl border border-border shadow-sm p-8 lg:p-12'>
+            <ReactMarkdown rehypePlugins={[rehypeRaw]} components={components}>
+              {markdown}
+            </ReactMarkdown>
+          </div>
         </div>
       </div>
     </div>
