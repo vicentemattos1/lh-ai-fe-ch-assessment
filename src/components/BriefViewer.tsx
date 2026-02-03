@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
+import { format } from 'date-fns';
 import { Brief, VerificationResult } from '../types';
 import { VerificationSummary } from './VerificationSummary';
 import { LoadingState } from './BriefViewer/LoadingState';
@@ -71,6 +72,10 @@ export function BriefViewer({ brief, isLoading, isError, onCitationClick, select
     [brief, selectedCitationId, onCitationClick]
   );
 
+  const formatDate = (dateString: string) => {
+    return format(new Date(dateString), 'MMMM d, yyyy');
+  };
+
   return (
     <div className="flex flex-col h-full bg-card">
       <div className="flex-1 overflow-y-auto px-8 py-6">
@@ -78,6 +83,14 @@ export function BriefViewer({ brief, isLoading, isError, onCitationClick, select
           <VerificationSummary brief={brief} isLoading={false} />
 
           <div className='bg-card rounded-xl border border-border shadow-sm p-8 lg:p-12'>
+            <div className="mb-6 pb-4 border-b border-border">
+              <div className="flex items-center justify-between">
+                <h1 className="text-2xl font-bold">{brief.title}</h1>
+                <span className="text-sm text-muted-foreground">
+                  Created {formatDate(brief.createdAt)}
+                </span>
+              </div>
+            </div>
             <ReactMarkdown rehypePlugins={[rehypeRaw]} components={components}>
               {markdown}
             </ReactMarkdown>

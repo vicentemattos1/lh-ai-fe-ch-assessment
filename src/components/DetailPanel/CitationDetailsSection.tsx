@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { Citation } from '../../types';
 
 interface CitationDetailsSectionProps {
@@ -37,6 +38,16 @@ export function CitationDetailsSection({ citation }: CitationDetailsSectionProps
           </strong>
           <p className="text-sm text-foreground">{citation.year}</p>
         </div>
+        {citation.date && (
+          <div className="space-y-1">
+            <strong className="text-xs font-semibold font-sans text-muted-foreground uppercase tracking-wide">
+              Date
+            </strong>
+            <p className="text-sm text-foreground">
+              {format(new Date(citation.date), 'MMMM d, yyyy')}
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

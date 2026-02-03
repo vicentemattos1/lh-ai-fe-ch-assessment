@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
 import { briefApi } from '../services/briefApi';
 import { Brief } from '../types';
 import { AppHeader } from './AppHeader';
@@ -76,15 +77,24 @@ function BriefCard({ brief }: { brief: Brief }) {
     (r) => r.severity === 'critical'
   ).length;
 
+  const formatDate = (dateString: string) => {
+    return format(new Date(dateString), 'MMM d, yyyy');
+  };
+
   return (
     <Link
       to={`/${brief.id}`}
       className="block p-6 border border-border rounded-lg hover:bg-[#1a1f2e]/10 transition-colors group"
     >
       <div className="mb-4">
-        <h2 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
-          {brief.title || `Brief ${brief.id}`}
-        </h2>
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <h2 className="text-xl font-semibold group-hover:text-primary transition-colors flex-1">
+            {brief.title || `Brief ${brief.id}`}
+          </h2>
+          <span className="text-xs text-muted-foreground whitespace-nowrap">
+            {formatDate(brief.createdAt)}
+          </span>
+        </div>
         <p className="text-sm text-muted-foreground line-clamp-2">
           {brief.content.substring(0, 150)}...
         </p>
