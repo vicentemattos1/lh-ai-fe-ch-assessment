@@ -1,4 +1,6 @@
+import { sampleBrief } from '../data/sampleBrief';
 import { Brief, Citation, VerificationResult } from '../types';
+import { VerificationSummary } from './VerificationSummary';
 
 interface BriefViewerProps {
   brief: Brief;
@@ -15,14 +17,14 @@ export function BriefViewer({
     return brief.verificationResults.find((r) => r.citationId === citationId);
   };
 
-  const getSeverityColor = (severity: string): string => {
+  const getSeverityClasses = (severity: string): string => {
     switch (severity) {
       case 'critical':
-        return 'red';
+        return 'bg-severity-critical-bg text-severity-critical border-severity-critical-border';
       case 'warning':
-        return 'yellow';
+        return 'bg-severity-warning-bg text-severity-warning border-severity-warning-border';
       default:
-        return 'lightgreen';
+        return 'bg-severity-valid-bg text-severity-valid border-severity-valid-border';
     }
   };
 
@@ -51,12 +53,7 @@ export function BriefViewer({
           <span
             key={citation.id}
             onClick={() => result && onCitationClick(citation, result)}
-            style={{
-              backgroundColor: getSeverityColor(severity),
-              padding: '2px 4px',
-              cursor: 'pointer',
-              border: isSelected ? '2px solid black' : 'none',
-            }}
+            className={`px-1.5 py-0.5 rounded cursor-pointer border transition-all hover:opacity-90 ${getSeverityClasses(severity)} ${isSelected ? 'ring-2 ring-primary ring-offset-2' : 'border-transparent'}`}
           >
             {citation.text}
           </span>
@@ -74,9 +71,17 @@ export function BriefViewer({
   };
 
   return (
-    <div>
-      <h1>{brief.title}</h1>
-      <div style={{ whiteSpace: 'pre-wrap' }}>{renderContent()}</div>
+    <div className="flex flex-col h-full bg-card">
+      <div className="sticky top-0 z-10 bg-card border-b border-border px-8 py-6">
+        <h1 className="text-2xl font-semibold font-sans text-primary tracking-tight">{brief.title}</h1>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-8 py-6">
+        <div className="legal-prose max-w-4xl mx-auto whitespace-pre-wrap">
+          <VerificationSummary brief={brief} />
+          {renderContent()}
+        </div>
+      </div>
     </div>
   );
 }

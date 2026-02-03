@@ -14,15 +14,15 @@ function App() {
   };
 
   return (
-    <div style={{ display: 'flex' }}>
-      <div style={{ flex: 1 }}>
+    <div className='flex h-screen overflow-hidden'>
+      <div className='flex-1 overflow-hidden'>
         <BriefViewer
           brief={sampleBrief}
           onCitationClick={handleCitationClick}
           selectedCitationId={selectedCitation?.id || null}
         />
       </div>
-      <div style={{ width: '400px', borderLeft: '1px solid black', padding: '10px' }}>
+      <div className='h-full w-[400px] border-l border-border overflow-hidden flex flex-col'>
         <DetailPanel citation={selectedCitation} result={selectedResult} />
       </div>
     </div>

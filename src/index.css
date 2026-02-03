@@ -1,3 +1,179 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Trusted Hand Design System
+   A professional legal document verification interface
+   Colors: Deep slate blues, warm reading surfaces, clear severity indicators
+*/
+
+@layer base {
+  :root {
+    /* Core surfaces */
+    --background: 40 20% 98%;
+    --foreground: 220 25% 15%;
+    
+    /* Document surface - warm off-white for reading */
+    --card: 45 30% 97%;
+    --card-foreground: 220 25% 15%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 15%;
+    
+    /* Primary - deep professional slate/navy */
+    --primary: 220 45% 20%;
+    --primary-foreground: 45 30% 97%;
+    
+    /* Secondary - subtle warm gray */
+    --secondary: 220 15% 92%;
+    --secondary-foreground: 220 25% 25%;
+    
+    /* Muted elements */
+    --muted: 220 15% 94%;
+    --muted-foreground: 220 15% 45%;
+    
+    /* Accent - warm gold for subtle highlights */
+    --accent: 38 90% 50%;
+    --accent-foreground: 220 25% 15%;
+    
+    /* Semantic colors for citation verification */
+    --severity-valid: 150 60% 40%;
+    --severity-valid-bg: 150 60% 95%;
+    --severity-valid-border: 150 60% 75%;
+    
+    --severity-warning: 38 92% 50%;
+    --severity-warning-bg: 38 100% 94%;
+    --severity-warning-border: 38 92% 70%;
+    
+    --severity-critical: 0 72% 51%;
+    --severity-critical-bg: 0 100% 96%;
+    --severity-critical-border: 0 72% 75%;
+    
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 220 45% 20%;
+    
+    --radius: 0.5rem;
+    
+    /* Sidebar for detail panel */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 25% 15%;
+    --sidebar-primary: 220 45% 20%;
+    --sidebar-primary-foreground: 45 30% 97%;
+    --sidebar-accent: 220 15% 96%;
+    --sidebar-accent-foreground: 220 25% 15%;
+    --sidebar-border: 220 20% 90%;
+    --sidebar-ring: 220 45% 20%;
+  }
+
+  .dark {
+    --background: 220 25% 8%;
+    --foreground: 220 15% 92%;
+    
+    --card: 220 25% 10%;
+    --card-foreground: 220 15% 92%;
+    
+    --popover: 220 25% 10%;
+    --popover-foreground: 220 15% 92%;
+    
+    --primary: 220 40% 70%;
+    --primary-foreground: 220 25% 8%;
+    
+    --secondary: 220 20% 18%;
+    --secondary-foreground: 220 15% 85%;
+    
+    --muted: 220 20% 15%;
+    --muted-foreground: 220 15% 55%;
+    
+    --accent: 38 80% 55%;
+    --accent-foreground: 220 25% 8%;
+    
+    --severity-valid: 150 50% 50%;
+    --severity-valid-bg: 150 30% 15%;
+    --severity-valid-border: 150 40% 30%;
+    
+    --severity-warning: 38 85% 55%;
+    --severity-warning-bg: 38 50% 12%;
+    --severity-warning-border: 38 60% 30%;
+    
+    --severity-critical: 0 65% 55%;
+    --severity-critical-bg: 0 50% 12%;
+    --severity-critical-border: 0 50% 30%;
+    
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 220 20% 18%;
+    --input: 220 20% 18%;
+    --ring: 220 40% 70%;
+    
+    --sidebar-background: 220 25% 10%;
+    --sidebar-foreground: 220 15% 92%;
+    --sidebar-primary: 220 40% 70%;
+    --sidebar-primary-foreground: 220 25% 8%;
+    --sidebar-accent: 220 20% 15%;
+    --sidebar-accent-foreground: 220 15% 92%;
+    --sidebar-border: 220 20% 18%;
+    --sidebar-ring: 220 40% 70%;
+  }
+}
+
+@layer base {
+
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+}
+
+/* Legal document typography */
+@layer components {
+  .legal-prose {
+    @apply text-foreground leading-relaxed;
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+
+  .legal-prose h1,
+  .legal-prose h2,
+  .legal-prose h3 {
+    font-family: system-ui, -apple-system, sans-serif;
+    @apply font-semibold text-primary tracking-tight;
+  }
+
+  .legal-prose h2 {
+    @apply text-lg mt-8 mb-4 pb-2 border-b
+  }
+
+  .legal-prose h3 {
+    @apply text-base mt-6 mb-3;
+  }
+
+  .legal-prose p {
+    @apply mb-4 text-base;
+  }
+
+  .legal-prose blockquote {
+    @apply pl-4 border-l-2 border-muted-foreground/30 italic my-4 text-muted-foreground;
+  }
+
+  .legal-prose ul,
+  .legal-prose ol {
+    @apply ml-6 mb-4 space-y-1;
+  }
+
+  .legal-prose li {
+    @apply text-base;
+  }
+
+  .legal-prose strong {
+    @apply font-semibold;
+  }
+
+  .legal-prose em {
+    @apply italic;
+  }
+}
