@@ -42,9 +42,6 @@ export function BriefViewer({ brief, isLoading, isError, onCitationClick, select
   if (isLoading) {
     return (
       <div className="flex flex-col h-full bg-card">
-        <div className="sticky top-0 z-10 bg-card border-b border-border px-8 py-6">
-          <div className="h-8 w-64 bg-muted animate-pulse rounded" />
-        </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="w-8 h-8 text-primary animate-spin" />
@@ -59,9 +56,6 @@ export function BriefViewer({ brief, isLoading, isError, onCitationClick, select
   if (isError) {
     return (
       <div className="flex flex-col h-full bg-card">
-        <div className="sticky top-0 z-10 bg-card border-b border-border px-8 py-6">
-          <div className="h-8 w-64 bg-muted rounded" />
-        </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-4 max-w-md text-center">
             <AlertCircle className="w-12 h-12 text-destructive" />
@@ -81,9 +75,6 @@ export function BriefViewer({ brief, isLoading, isError, onCitationClick, select
   if (!brief || (!brief.content && brief.citations.length === 0)) {
     return (
       <div className="flex flex-col h-full bg-card">
-        <div className="sticky top-0 z-10 bg-card border-b border-border px-8 py-6">
-          <div className="h-8 w-64 bg-muted rounded" />
-        </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-4 max-w-md text-center">
             <FileText className="w-12 h-12 text-muted-foreground" />
@@ -185,12 +176,6 @@ export function BriefViewer({ brief, isLoading, isError, onCitationClick, select
 
   return (
     <div className="flex flex-col h-full bg-card">
-      <div className="sticky top-0 z-10 bg-card border-b border-border px-8 py-6">
-        <h1 className="text-2xl font-semibold font-sans text-primary tracking-tight">
-          {brief.title}
-        </h1>
-      </div>
-
       <div className="flex-1 overflow-y-auto px-8 py-6">
         <div className="legal-prose  max-w-4xl mx-auto whitespace-pre-wrap">
           <VerificationSummary brief={brief} isLoading={false} />
