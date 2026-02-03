@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import { CheckCircle, AlertTriangle, XCircle, FileText, Loader2 } from 'lucide-react';
+import { FileText, Loader2 } from 'lucide-react';
 import { Brief } from '../types';
+import { StatBadge } from './VerificationSummary/StatBadge';
 
 interface VerificationSummaryProps {
   brief: Brief | undefined;
@@ -74,29 +75,9 @@ export function VerificationSummary({ brief, isLoading }: VerificationSummaryPro
       <div className="h-4 w-px bg-border" />
 
       <div className="flex items-center gap-4">
-        {stats.valid > 0 && (
-          <div className="flex items-center gap-1.5 text-sm">
-            <CheckCircle className="w-4 h-4 text-severity-valid" />
-            <span className="font-medium text-severity-valid">{stats.valid}</span>
-            <span className="text-muted-foreground">verified</span>
-          </div>
-        )}
-
-        {stats.warning > 0 && (
-          <div className="flex items-center gap-1.5 text-sm">
-            <AlertTriangle className="w-4 h-4 text-severity-warning" />
-            <span className="font-medium text-severity-warning">{stats.warning}</span>
-            <span className="text-muted-foreground">warnings</span>
-          </div>
-        )}
-
-        {stats.critical > 0 && (
-          <div className="flex items-center gap-1.5 text-sm">
-            <XCircle className="w-4 h-4 text-severity-critical" />
-            <span className="font-medium text-severity-critical">{stats.critical}</span>
-            <span className="text-muted-foreground">critical</span>
-          </div>
-        )}
+        <StatBadge type="valid" count={stats.valid} />
+        <StatBadge type="warning" count={stats.warning} />
+        <StatBadge type="critical" count={stats.critical} />
       </div>
     </motion.div>
   );

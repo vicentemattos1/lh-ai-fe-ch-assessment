@@ -2,11 +2,13 @@ import { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
-import type { Element } from 'hast';
-import { Loader2, AlertCircle, FileText, RefreshCw } from 'lucide-react';
-
-import { Brief, Citation, VerificationResult } from '../types';
+import { Brief, VerificationResult } from '../types';
 import { VerificationSummary } from './VerificationSummary';
+import { LoadingState } from './BriefViewer/LoadingState';
+import { ErrorState } from './BriefViewer/ErrorState';
+import { EmptyState } from './BriefViewer/EmptyState';
+import { CitationSpan } from './BriefViewer/CitationSpan';
+import { contentToMarkdownWithCitationSpans } from './BriefViewer/utils';
 
 interface BriefViewerProps {
   brief: Brief | undefined;
@@ -17,102 +19,24 @@ interface BriefViewerProps {
   onRefresh?: () => void;
 }
 
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function contentToMarkdownWithCitationSpans(content: string, citations: Citation[]): string {
-  return content.replace(/\[\[CITATION:(\d+)\]\]/g, (_m, n) => {
-    const idx = Number(n);
-    const citation = Number.isFinite(idx) ? citations[idx - 1] : undefined;
-    if (!citation) return `[[CITATION:${n}]]`;
-
-    // Marker span. Styling + behavior comes from Components.span below.
-    const safeText = escapeHtml(citation.text);
-    return `<span data-citation-index="${n}">${safeText}</span>`;
-  });
-}
-
 export function BriefViewer({ brief, isLoading, isError, onCitationClick, selectedCitationId, onRefresh }: BriefViewerProps) {
   // Loading state
   if (isLoading) {
-    return (
-      <div className="flex flex-col h-full bg-card">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <Loader2 className="w-8 h-8 text-primary animate-spin" />
-            <p className="text-sm text-muted-foreground">Loading brief...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   // Error state
   if (isError) {
-    return (
-      <div className="flex flex-col h-full bg-card">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4 max-w-md text-center">
-            <AlertCircle className="w-12 h-12 text-destructive" />
-            <div>
-              <h2 className="text-lg font-semibold text-foreground mb-2">Failed to load brief</h2>
-              <p className="text-sm text-muted-foreground">
-                There was an error loading the brief. Please try again later.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorState onRefresh={onRefresh} />;
   }
 
   // Empty state
   if (!brief || (!brief.content && brief.citations.length === 0)) {
-    return (
-      <div className="flex flex-col h-full bg-card">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4 max-w-md text-center">
-            <FileText className="w-12 h-12 text-muted-foreground" />
-            <div>
-              <h2 className="text-lg font-semibold text-foreground mb-2">No brief available</h2>
-              <p className="text-sm text-muted-foreground mb-4">
-                This brief appears to be empty or unavailable.
-              </p>
-            </div>
-            {onRefresh && (
-              <button
-                onClick={() => onRefresh()}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
-              >
-                <RefreshCw className="w-4 h-4" />
-                <span>Refresh</span>
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    );
+    return <EmptyState onRefresh={onRefresh} />;
   }
 
   const getResultForCitation = (citationId: string): VerificationResult | undefined => {
     return brief.verificationResults.find((r) => r.citationId === citationId);
-  };
-
-  const getSeverityClasses = (severity: string): string => {
-    switch (severity) {
-      case 'critical':
-        return 'bg-severity-critical-bg text-severity-critical border-severity-critical-border hover:bg-severity-critical/15 hover:border-severity-critical hover:border-opacity-100';
-      case 'warning':
-        return 'bg-severity-warning-bg text-severity-warning border-severity-warning-border hover:bg-severity-warning/15 hover:border-severity-warning hover:border-opacity-100';
-      default:
-        return 'bg-severity-valid-bg text-severity-valid border-severity-valid-border hover:bg-severity-valid/15 hover:border-severity-valid hover:border-opacity-100';
-    }
   };
 
   const markdown = useMemo(
@@ -123,61 +47,24 @@ export function BriefViewer({ brief, isLoading, isError, onCitationClick, select
   const components: Components = useMemo(
     () => ({
       span: ({ node, children, ...props }) => {
-        const el = node as unknown as Element;
-        const rawIndex = el.properties?.['dataCitationIndex'];
+        // Check if this is a citation span by looking at the node properties
+        const el = node as any;
+        const rawIndex = el?.properties?.['dataCitationIndex'];
 
         if (rawIndex == null) {
           return <span {...props}>{children}</span>;
         }
 
-        const n = Number(rawIndex);
-        const citation = Number.isFinite(n) ? brief!.citations[n - 1] : undefined;
-
-        if (!citation) {
-          return <span {...props}>{children}</span>;
-        }
-
-        const result = getResultForCitation(citation.id);
-        const severity = result?.severity ?? 'none';
-        const isSelected = selectedCitationId === citation.id;
-
-        const isClickable = Boolean(result);
-
-        const baseClasses =
-          'px-1.5 py-0.5 rounded border transition-all';
-        const cursorClass = isClickable ? 'cursor-pointer' : 'cursor-default';
-        const hoverClasses = isClickable
-          ? 'hover:scale-105 hover:shadow-md'
-          : '';
-
-        const extraEmphasis =
-          severity === 'critical' ? 'font-semibold' : '';
-
         return (
-          <span
-            key={citation.id}
-            onClick={() => isClickable && onCitationClick(citation.id)}
-            className={[
-              baseClasses,
-              cursorClass,
-              getSeverityClasses(severity),
-              extraEmphasis,
-              hoverClasses,
-              isSelected ? 'ring-2 ring-primary ring-offset-2' : 'border-transparent',
-            ].join(' ')}
-            title={result?.message ?? undefined}
-            role={isClickable ? 'button' : undefined}
-            tabIndex={isClickable ? 0 : -1}
-            onKeyDown={(e) => {
-              if (!isClickable) return;
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onCitationClick(citation.id);
-              }
-            }}
+          <CitationSpan
+            node={node}
+            brief={brief}
+            selectedCitationId={selectedCitationId}
+            onCitationClick={onCitationClick}
+            getResultForCitation={getResultForCitation}
           >
-            {citation.text}
-          </span>
+            {children}
+          </CitationSpan>
         );
       },
     }),
