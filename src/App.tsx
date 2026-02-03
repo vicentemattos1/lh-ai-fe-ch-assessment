@@ -9,7 +9,7 @@ function App() {
   const [selectedCitationId, setSelectedCitationId] = useState<string | null>(null);
 
   // Fetch brief using React Query
-  const { data: brief, isLoading, isError } = useQuery({
+  const { data: brief, isLoading, isError, refetch } = useQuery({
     queryKey: ['brief', 'brief-001'],
     queryFn: () => briefApi.fetchBrief('brief-001'),
   });
@@ -66,6 +66,7 @@ function App() {
             isError={isError}
             onCitationClick={handleCitationClick}
             selectedCitationId={selectedCitationId}
+            onRefresh={refetch}
           />
         </div>
         <div 

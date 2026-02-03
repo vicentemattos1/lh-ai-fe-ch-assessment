@@ -156,6 +156,38 @@
     @apply mb-4 text-base;
   }
 
+  /* Normalize whitespace - collapse multiple spaces */
+  .legal-prose {
+    white-space: normal;
+  }
+
+  .legal-prose p,
+  .legal-prose li,
+  .legal-prose blockquote,
+  .legal-prose h1,
+  .legal-prose h2,
+  .legal-prose h3,
+  .legal-prose h4,
+  .legal-prose h5,
+  .legal-prose h6 {
+    white-space: normal;
+    word-spacing: normal;
+  }
+
+  /* Preserve whitespace only for code blocks */
+  .legal-prose code:not(pre code) {
+    white-space: nowrap;
+  }
+
+  .legal-prose pre {
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .legal-prose pre code {
+    white-space: pre;
+  }
+
   .legal-prose blockquote {
     @apply pl-4 border-l-2 border-muted-foreground/30 italic my-4 text-muted-foreground;
   }

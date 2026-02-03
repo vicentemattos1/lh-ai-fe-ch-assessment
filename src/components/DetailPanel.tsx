@@ -135,7 +135,7 @@ export function DetailPanel({ citationId, onClose }: DetailPanelProps) {
             <BookOpen className="w-3.5 h-3.5" />
             Citation
           </h3>
-          <p className="text-sm font-serif text-foreground leading-relaxed">
+          <p className="text-sm text-foreground leading-relaxed">
             {citation.text}
           </p>
         </section>

@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import type { Element } from 'hast';
-import { Loader2, AlertCircle, FileText } from 'lucide-react';
+import { Loader2, AlertCircle, FileText, RefreshCw } from 'lucide-react';
 
 import { Brief, Citation, VerificationResult } from '../types';
 import { VerificationSummary } from './VerificationSummary';
@@ -14,6 +14,7 @@ interface BriefViewerProps {
   isError: boolean;
   onCitationClick: (citationId: string) => void;
   selectedCitationId: string | null;
+  onRefresh?: () => void;
 }
 
 function escapeHtml(value: string): string {
@@ -37,7 +38,7 @@ function contentToMarkdownWithCitationSpans(content: string, citations: Citation
   });
 }
 
-export function BriefViewer({ brief, isLoading, isError, onCitationClick, selectedCitationId }: BriefViewerProps) {
+export function BriefViewer({ brief, isLoading, isError, onCitationClick, selectedCitationId, onRefresh }: BriefViewerProps) {
   // Loading state
   if (isLoading) {
     return (
@@ -80,10 +81,19 @@ export function BriefViewer({ brief, isLoading, isError, onCitationClick, select
             <FileText className="w-12 h-12 text-muted-foreground" />
             <div>
               <h2 className="text-lg font-semibold text-foreground mb-2">No brief available</h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground mb-4">
                 This brief appears to be empty or unavailable.
               </p>
             </div>
+            {onRefresh && (
+              <button
+                onClick={() => onRefresh()}
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span>Refresh</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -177,7 +187,7 @@ export function BriefViewer({ brief, isLoading, isError, onCitationClick, select
   return (
     <div className="flex flex-col h-full bg-card">
       <div className="flex-1 overflow-y-auto px-8 py-6">
-        <div className="legal-prose  max-w-4xl mx-auto whitespace-pre-wrap">
+        <div className="legal-prose max-w-4xl mx-auto">
           <VerificationSummary brief={brief} isLoading={false} />
 
           <div className='bg-card rounded-xl border border-border shadow-sm p-8 lg:p-12'>
